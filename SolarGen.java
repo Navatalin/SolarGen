@@ -33,7 +33,7 @@ public class SolarGen
 
             for(int i = 0; i < maxAsteroids; i++)
             {
-                Asteroid a = genAsteroid(minWeight,maxWeight,-1*maxRadius,maxRadius);
+                Asteroid a = genAsteroid(minWeight,maxWeight,maxRadius*0.2,maxRadius);
                 asteroids.add(a);
             
             }
@@ -52,6 +52,22 @@ public class SolarGen
         RandomDataGenerator gen = new RandomDataGenerator();
         double res = gen.nextUniform(low,high);
         return res;
+    }
+    public static double randDist(double max, double min)
+    {
+        double mean = max / 2.0;
+        double std = max / 4.0;
+        NormalDistribution norm = new NormalDistribution(mean, std);
+        
+        double dist = 0;
+        while(dist == 0)
+        {
+            dist = norm.sample();
+            if(dist < min)
+                dist = 0;
+        }
+        
+        return dist;
     }
     public static double[] findLoc(double start[], double dist, double deg)
     {
@@ -74,8 +90,13 @@ public class SolarGen
     }
     public static Asteroid genAsteroid(double low, double high, double min, double max)
     {
+        double[] origin = {0.0,0.0};
+        
         Asteroid res = new Asteroid(getRand(low, high));
-        double[] randomLocation = randLoc(min, max);
+        
+        double[] randomLocation = findLoc(origin, randDist(max, min),getRand(1,360));
+        
+        //double[] randomLocation = randLoc(min, max);
         res.setLoc(randomLocation[0], randomLocation[1]);
         
     	return res;
